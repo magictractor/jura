@@ -54,8 +54,9 @@ public abstract class AbstractValueChangeExtension
     private boolean _isRegistered;
     private boolean _isWithinTest;
 
-    // TODO! ThreadLocal or similar to detect if it hasn't been closed properly? maybe in finalize()?
-    private ValueChanges _valueChanges = new ValueChanges();
+    private List<ValueChange> _pending = new ArrayList<>();
+    private List<ValueChange> _allTests = new ArrayList<>();
+    private List<ValueChange> _singleTest = new ArrayList<>();
 
     @Override
     public final void beforeAll(ExtensionContext context) throws Exception {
@@ -77,7 +78,7 @@ public abstract class AbstractValueChangeExtension
         else {
             // Reapply the value changes which would have been reverted after the previous test.
             // TODO! why didn't unit test fail before this was added?
-            getValueChanges()._singleTest.forEach(ValueChange::apply);
+            _singleTest.forEach(ValueChange::apply);
         }
 
         _isWithinTest = true;
@@ -88,54 +89,48 @@ public abstract class AbstractValueChangeExtension
         getLogger().trace("afterEach");
 
         _isWithinTest = false;
-        revert(getValueChanges()._singleTest);
+        revert(_singleTest);
     }
 
     @Override
     public final void afterAll(ExtensionContext context) throws Exception {
         getLogger().trace("afterAll");
 
-        revert(getValueChanges()._allTests);
+        revert(_allTests);
     }
 
     private void applyPending(boolean isStatic) {
-        ValueChanges valueChanges = getValueChanges();
-        valueChanges._pending.forEach(ValueChange::apply);
+        _pending.forEach(ValueChange::apply);
         if (isStatic) {
-            valueChanges._allTests = valueChanges._pending;
+            _allTests = _pending;
         }
         else {
             /*
              * There will be no beforeAll() and afterAll() callbacks, so value
              * changes must be applied and reverted for every test.
              */
-            valueChanges._singleTest = valueChanges._pending;
+            _singleTest = _pending;
         }
-        valueChanges._pending = new ArrayList<>();
+        _pending = new ArrayList<>();
     }
 
     private void revert(List<ValueChange> valueChanges) {
         /*
-         * Values reverted in reverse order in case the are multiple
+         * Values reverted in reverse order in case there are multiple
          * ValueChanges modifying the same value.
          */
         Lists.reverse(valueChanges).forEach(ValueChange::revert);
         valueChanges.clear();
     }
 
-    private ValueChanges getValueChanges() {
-        return _valueChanges;
-    }
-
     public void addValueChange(ValueChange valueChange) {
-        ValueChanges valueChanges = getValueChanges();
         if (_isRegistered) {
             valueChange.apply();
             if (_isWithinTest) {
-                valueChanges._singleTest.add(valueChange);
+                _singleTest.add(valueChange);
             }
             else {
-                valueChanges._allTests.add(valueChange);
+                _allTests.add(valueChange);
             }
         }
         else {
@@ -143,18 +138,12 @@ public abstract class AbstractValueChangeExtension
              * ValueChange.apply() is called later when the first callback is
              * received, in case the extension has not been registered properly.
              */
-            valueChanges._pending.add(valueChange);
+            _pending.add(valueChange);
         }
     }
 
     protected Logger getLogger() {
         return _logger;
-    }
-
-    private static class ValueChanges {
-        private List<ValueChange> _pending = new ArrayList<>();
-        private List<ValueChange> _allTests = new ArrayList<>();
-        private List<ValueChange> _singleTest = new ArrayList<>();
     }
 
 }
