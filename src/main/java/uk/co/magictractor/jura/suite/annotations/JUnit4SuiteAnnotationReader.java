@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite.annotations;
 
 import java.lang.annotation.Annotation;
@@ -58,56 +59,53 @@ import uk.co.magictractor.jura.suite.filter.PreserveInterfaceFilter;
  */
 public class JUnit4SuiteAnnotationReader implements SuiteAnnotationReader {
 
-    @Override
-    public void readAnnotations(SuiteStreamBuilder builder) {
-        // Similar to JUnitPlatform.addFiltersFromAnnotations()
-        handleFilterAnnotation(builder, ExcludeClassNamePatterns.class,
-            a -> ClassNameFilter.excludeClassNamePatterns(a.value()));
-        handleFilterAnnotation(builder, IncludeClassNamePatterns.class,
-            a -> ClassNameFilter.includeClassNamePatterns(a.value()));
-        handleFilterAnnotation(builder, ExcludePackages.class,
-            a -> PackageNameFilter.excludePackageNames(a.value()));
-        handleFilterAnnotation(builder, IncludePackages.class,
-            a -> PackageNameFilter.includePackageNames(a.value()));
-        handleFilterAnnotation(builder, ExcludeTags.class, a -> TagFilter.excludeTags(a.value()));
-        handleFilterAnnotation(builder, IncludeTags.class, a -> TagFilter.includeTags(a.value()));
-        handleFilterAnnotation(builder, ExcludeEngines.class, a -> EngineFilter.excludeEngines(a.value()));
-        handleFilterAnnotation(builder, IncludeEngines.class, a -> EngineFilter.includeEngines(a.value()));
+	@Override
+	public void readAnnotations(SuiteStreamBuilder builder) {
+		// Similar to JUnitPlatform.addFiltersFromAnnotations()
+		handleFilterAnnotation(builder, ExcludeClassNamePatterns.class,
+			a -> ClassNameFilter.excludeClassNamePatterns(a.value()));
+		handleFilterAnnotation(builder, IncludeClassNamePatterns.class,
+			a -> ClassNameFilter.includeClassNamePatterns(a.value()));
+		handleFilterAnnotation(builder, ExcludePackages.class, a -> PackageNameFilter.excludePackageNames(a.value()));
+		handleFilterAnnotation(builder, IncludePackages.class, a -> PackageNameFilter.includePackageNames(a.value()));
+		handleFilterAnnotation(builder, ExcludeTags.class, a -> TagFilter.excludeTags(a.value()));
+		handleFilterAnnotation(builder, IncludeTags.class, a -> TagFilter.includeTags(a.value()));
+		handleFilterAnnotation(builder, ExcludeEngines.class, a -> EngineFilter.excludeEngines(a.value()));
+		handleFilterAnnotation(builder, IncludeEngines.class, a -> EngineFilter.includeEngines(a.value()));
 
-        Class<?> suiteInstanceClass = builder.getSuiteInstanceClass();
-        handleAnnotation(suiteInstanceClass, SelectClasses.class,
-            a -> addDiscoverySelectors(builder, a.value(), v -> DiscoverySelectors.selectClass(v)));
-        handleAnnotation(suiteInstanceClass, SelectPackages.class,
-            a -> addDiscoverySelectors(builder, a.value(), v -> DiscoverySelectors.selectPackage(v)));
-    }
+		Class<?> suiteInstanceClass = builder.getSuiteInstanceClass();
+		handleAnnotation(suiteInstanceClass, SelectClasses.class,
+			a -> addDiscoverySelectors(builder, a.value(), v -> DiscoverySelectors.selectClass(v)));
+		handleAnnotation(suiteInstanceClass, SelectPackages.class,
+			a -> addDiscoverySelectors(builder, a.value(), v -> DiscoverySelectors.selectPackage(v)));
+	}
 
-    private <A extends Annotation> void handleFilterAnnotation(SuiteStreamBuilder builder,
-            Class<A> annotationClass, Function<A, Filter<?>> filterFunction) {
-        handleAnnotation(builder.getSuiteInstanceClass(), annotationClass, (a) -> {
-            Filter baseFilter = filterFunction.apply(a);
-            // Ignore the filter for suites.
-            Filter notSuiteFilter = new IfElseFilter(() -> builder.isSuitePredicate(),
-                FilterResult.included("is a suite"),
-                baseFilter);
-            // But need to preserve PostDiscoveryFilter and DiscoveryFilter interfaces.
-            Filter preserveInterfaceFilter = PreserveInterfaceFilter.preserveInterface(baseFilter, notSuiteFilter);
-            builder.filter(preserveInterfaceFilter);
-        });
-    }
+	private <A extends Annotation> void handleFilterAnnotation(SuiteStreamBuilder builder, Class<A> annotationClass,
+			Function<A, Filter<?>> filterFunction) {
+		handleAnnotation(builder.getSuiteInstanceClass(), annotationClass, (a) -> {
+			Filter baseFilter = filterFunction.apply(a);
+			// Ignore the filter for suites.
+			Filter notSuiteFilter = new IfElseFilter(() -> builder.isSuitePredicate(),
+				FilterResult.included("is a suite"), baseFilter);
+			// But need to preserve PostDiscoveryFilter and DiscoveryFilter interfaces.
+			Filter preserveInterfaceFilter = PreserveInterfaceFilter.preserveInterface(baseFilter, notSuiteFilter);
+			builder.filter(preserveInterfaceFilter);
+		});
+	}
 
-    private <V> void addDiscoverySelectors(SuiteStreamBuilder builder, V[] values,
-            Function<V, DiscoverySelector> selectorFunction) {
-        for (V value : values) {
-            builder.select(selectorFunction.apply(value));
-        }
-    }
+	private <V> void addDiscoverySelectors(SuiteStreamBuilder builder, V[] values,
+			Function<V, DiscoverySelector> selectorFunction) {
+		for (V value : values) {
+			builder.select(selectorFunction.apply(value));
+		}
+	}
 
-    private <A extends Annotation> void handleAnnotation(Class<?> suiteInstanceClass, Class<A> annotationClass,
-            Consumer<A> annotationConsumer) {
-        A annotation = suiteInstanceClass.getAnnotation(annotationClass);
-        if (annotation != null) {
-            annotationConsumer.accept(annotation);
-        }
-    }
+	private <A extends Annotation> void handleAnnotation(Class<?> suiteInstanceClass, Class<A> annotationClass,
+			Consumer<A> annotationConsumer) {
+		A annotation = suiteInstanceClass.getAnnotation(annotationClass);
+		if (annotation != null) {
+			annotationConsumer.accept(annotation);
+		}
+	}
 
 }

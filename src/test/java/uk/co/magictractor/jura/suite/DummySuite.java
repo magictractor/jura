@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite;
 
 import java.util.stream.Stream;
@@ -26,9 +27,9 @@ import uk.co.magictractor.jura.suite.WithinSuite;
 @WithinSuite
 public class DummySuite {
 
-    @Suite
-    public Stream<DynamicNode> suite() {
-        return new SuiteStreamBuilder().selectOthersInPackage().build();
-    }
+	@Suite
+	public Stream<DynamicNode> suite() {
+		return new SuiteStreamBuilder().selectOthersInPackage().build();
+	}
 
 }

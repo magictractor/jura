@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite.filter;
 
 import java.util.function.Predicate;
@@ -27,31 +28,31 @@ import org.slf4j.LoggerFactory;
 
 public class IsSuiteFilter implements ClassNameFilter {
 
-    private final Logger _logger = LoggerFactory.getLogger(getClass());
+	private final Logger _logger = LoggerFactory.getLogger(getClass());
 
-    private final Supplier<Predicate<String>> _suitePredicateSupplier;
-    private FilterResult _included = FilterResult.included("is a suite");
-    private FilterResult _excluded = FilterResult.excluded("is not a suite");
+	private final Supplier<Predicate<String>> _suitePredicateSupplier;
+	private FilterResult _included = FilterResult.included("is a suite");
+	private FilterResult _excluded = FilterResult.excluded("is not a suite");
 
-    public IsSuiteFilter(Supplier<Predicate<String>> suitePredicateSupplier) {
-        _suitePredicateSupplier = suitePredicateSupplier;
-    }
+	public IsSuiteFilter(Supplier<Predicate<String>> suitePredicateSupplier) {
+		_suitePredicateSupplier = suitePredicateSupplier;
+	}
 
-    @Override
-    public FilterResult apply(String testClassName) {
-        return isIncluded(testClassName) ? _included : _excluded;
-    }
+	@Override
+	public FilterResult apply(String testClassName) {
+		return isIncluded(testClassName) ? _included : _excluded;
+	}
 
-    private boolean isIncluded(String testClassName) {
-        boolean isIncluded = _suitePredicateSupplier.get().test(testClassName);
-        _logger.debug("isIncluded({}) -> {}", testClassName, isIncluded);
+	private boolean isIncluded(String testClassName) {
+		boolean isIncluded = _suitePredicateSupplier.get().test(testClassName);
+		_logger.debug("isIncluded({}) -> {}", testClassName, isIncluded);
 
-        return isIncluded;
-    }
+		return isIncluded;
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).toString();
+	}
 
 }

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite;
 
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
@@ -33,39 +34,38 @@ import org.junit.jupiter.api.extension.ExtensionContext;
  */
 /* default */ class CaptureContextExtension implements BeforeTestExecutionCallback, AfterTestExecutionCallback {
 
-    private static final ThreadLocal<ExtensionContext> CONTEXT = new ThreadLocal<>();
+	private static final ThreadLocal<ExtensionContext> CONTEXT = new ThreadLocal<>();
 
-    public static ExtensionContext remove() {
-        ExtensionContext context = CONTEXT.get();
-        if (context != null) {
-            CONTEXT.remove();
-        }
-        else {
-            throw new IllegalStateException(SuiteStreamBuilder.class.getSimpleName()
-                    + " should only be used in a method annoted by @" + Suite.class.getSimpleName());
-        }
-        return context;
-    }
+	public static ExtensionContext remove() {
+		ExtensionContext context = CONTEXT.get();
+		if (context != null) {
+			CONTEXT.remove();
+		}
+		else {
+			throw new IllegalStateException(SuiteStreamBuilder.class.getSimpleName()
+					+ " should only be used in a method annoted by @" + Suite.class.getSimpleName());
+		}
+		return context;
+	}
 
-    @Override
-    public void beforeTestExecution(ExtensionContext context) throws Exception {
-        if (CONTEXT.get() != null) {
-            // Just log an error/warning??
-            throw new IllegalStateException("There is an existing ExtensionContext");
-        }
+	@Override
+	public void beforeTestExecution(ExtensionContext context) throws Exception {
+		if (CONTEXT.get() != null) {
+			// Just log an error/warning??
+			throw new IllegalStateException("There is an existing ExtensionContext");
+		}
 
-        CONTEXT.set(context);
-    }
+		CONTEXT.set(context);
+	}
 
-    @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+	@Override
+	public void afterTestExecution(ExtensionContext context) throws Exception {
 
-        if (CONTEXT.get() != null) {
-            // Just log an error/warning??
-            throw new IllegalStateException(
-                "The ExtensionContext was not removed by a " + SuiteStreamBuilder.class.getSimpleName()
-                        + " (or similar)");
-        }
-    }
+		if (CONTEXT.get() != null) {
+			// Just log an error/warning??
+			throw new IllegalStateException("The ExtensionContext was not removed by a "
+					+ SuiteStreamBuilder.class.getSimpleName() + " (or similar)");
+		}
+	}
 
 }

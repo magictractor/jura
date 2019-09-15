@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite.filter;
 
 import com.google.common.base.MoreObjects;
@@ -24,39 +25,39 @@ import org.slf4j.LoggerFactory;
 
 public class SamePackageFilter implements ClassNameFilter {
 
-    private final Logger _logger = LoggerFactory.getLogger(getClass());
+	private final Logger _logger = LoggerFactory.getLogger(getClass());
 
-    private final String _suiteClassName;
-    private final String _suitePackagePlusDot;
-    private FilterResult _included = FilterResult.included("is in the same package as the suite class");
-    private FilterResult _excluded = FilterResult.excluded("is in a different package than the suite class");
+	private final String _suiteClassName;
+	private final String _suitePackagePlusDot;
+	private FilterResult _included = FilterResult.included("is in the same package as the suite class");
+	private FilterResult _excluded = FilterResult.excluded("is in a different package than the suite class");
 
-    public SamePackageFilter(String suiteClassName) {
-        _suiteClassName = suiteClassName;
-        _suitePackagePlusDot = suiteClassName.substring(0, suiteClassName.lastIndexOf(".") + 1);
-    }
+	public SamePackageFilter(String suiteClassName) {
+		_suiteClassName = suiteClassName;
+		_suitePackagePlusDot = suiteClassName.substring(0, suiteClassName.lastIndexOf(".") + 1);
+	}
 
-    public SamePackageFilter(Class<?> suiteClass) {
-        this(suiteClass.getName());
-    }
+	public SamePackageFilter(Class<?> suiteClass) {
+		this(suiteClass.getName());
+	}
 
-    @Override
-    public FilterResult apply(String testClassName) {
-        return isIncluded(testClassName) ? _included : _excluded;
-    }
+	@Override
+	public FilterResult apply(String testClassName) {
+		return isIncluded(testClassName) ? _included : _excluded;
+	}
 
-    private boolean isIncluded(String testClassName) {
-        boolean isIncluded = testClassName.startsWith(_suitePackagePlusDot)
-                && testClassName.indexOf(".", _suitePackagePlusDot.length()) == -1
-                && !_suiteClassName.equals(testClassName);
-        _logger.debug("isIncluded({}) -> {}", testClassName, isIncluded);
+	private boolean isIncluded(String testClassName) {
+		boolean isIncluded = testClassName.startsWith(_suitePackagePlusDot)
+				&& testClassName.indexOf(".", _suitePackagePlusDot.length()) == -1
+				&& !_suiteClassName.equals(testClassName);
+		_logger.debug("isIncluded({}) -> {}", testClassName, isIncluded);
 
-        return isIncluded;
-    }
+		return isIncluded;
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("suitePackagePlusDot", _suitePackagePlusDot).toString();
-    }
+	@Override
+	public String toString() {
+		return MoreObjects.toStringHelper(this).add("suitePackagePlusDot", _suitePackagePlusDot).toString();
+	}
 
 }

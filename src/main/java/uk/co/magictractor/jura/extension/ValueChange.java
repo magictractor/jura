@@ -13,24 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.extension;
 
 public interface ValueChange {
 
-    /**
-     * Apply the value change.
-     */
-    void apply();
+	/**
+	 * Apply the value change.
+	 */
+	void apply();
 
-    /**
-     * <p>
-     * Revert the value change.
-     * </p>
-     * <p>
-     * The original value should be captured when {@link #apply} is called
-     * rather than when the ValueChange is constructed.
-     * </p>
-     */
-    void revert();
+	/**
+	 * <p>
+	 * Revert the value change.
+	 * </p>
+	 * <p>
+	 * The original value should be captured when {@link #apply} is called
+	 * rather than when the ValueChange is constructed.
+	 * </p>
+	 */
+	void revert();
 
 }

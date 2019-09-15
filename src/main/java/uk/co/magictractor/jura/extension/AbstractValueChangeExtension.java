@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.extension;
 
 import java.util.ArrayList;
@@ -47,103 +48,103 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 public abstract class AbstractValueChangeExtension
-        implements BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback {
+		implements BeforeAllCallback, BeforeEachCallback, AfterAllCallback, AfterEachCallback {
 
-    private final Logger _logger = LoggerFactory.getLogger(getClass());
+	private final Logger _logger = LoggerFactory.getLogger(getClass());
 
-    private boolean _isRegistered;
-    private boolean _isWithinTest;
+	private boolean _isRegistered;
+	private boolean _isWithinTest;
 
-    private List<ValueChange> _pending = new ArrayList<>();
-    private List<ValueChange> _allTests = new ArrayList<>();
-    private List<ValueChange> _singleTest = new ArrayList<>();
+	private List<ValueChange> _pending = new ArrayList<>();
+	private List<ValueChange> _allTests = new ArrayList<>();
+	private List<ValueChange> _singleTest = new ArrayList<>();
 
-    @Override
-    public final void beforeAll(ExtensionContext context) throws Exception {
-        getLogger().trace("beforeAll");
+	@Override
+	public final void beforeAll(ExtensionContext context) throws Exception {
+		getLogger().trace("beforeAll");
 
-        applyPending(true);
-        _isRegistered = true;
-    }
+		applyPending(true);
+		_isRegistered = true;
+	}
 
-    @Override
-    public final void beforeEach(ExtensionContext context) throws Exception {
-        getLogger().trace("beforeEach");
+	@Override
+	public final void beforeEach(ExtensionContext context) throws Exception {
+		getLogger().trace("beforeEach");
 
-        if (!_isRegistered) {
-            // When the extension is used in a non-static variable then beforeAll() will not be called.
-            applyPending(false);
-            _isRegistered = true;
-        }
-        else {
-            // Reapply the value changes which would have been reverted after the previous test.
-            // TODO! why didn't unit test fail before this was added?
-            _singleTest.forEach(ValueChange::apply);
-        }
+		if (!_isRegistered) {
+			// When the extension is used in a non-static variable then beforeAll() will not be called.
+			applyPending(false);
+			_isRegistered = true;
+		}
+		else {
+			// Reapply the value changes which would have been reverted after the previous test.
+			// TODO! why didn't unit test fail before this was added?
+			_singleTest.forEach(ValueChange::apply);
+		}
 
-        _isWithinTest = true;
-    }
+		_isWithinTest = true;
+	}
 
-    @Override
-    public final void afterEach(ExtensionContext context) throws Exception {
-        getLogger().trace("afterEach");
+	@Override
+	public final void afterEach(ExtensionContext context) throws Exception {
+		getLogger().trace("afterEach");
 
-        _isWithinTest = false;
-        revert(_singleTest);
-    }
+		_isWithinTest = false;
+		revert(_singleTest);
+	}
 
-    @Override
-    public final void afterAll(ExtensionContext context) throws Exception {
-        getLogger().trace("afterAll");
+	@Override
+	public final void afterAll(ExtensionContext context) throws Exception {
+		getLogger().trace("afterAll");
 
-        revert(_allTests);
-    }
+		revert(_allTests);
+	}
 
-    private void applyPending(boolean isStatic) {
-        _pending.forEach(ValueChange::apply);
-        if (isStatic) {
-            _allTests = _pending;
-        }
-        else {
-            /*
-             * There will be no beforeAll() and afterAll() callbacks, so value
-             * changes must be applied and reverted for every test.
-             */
-            _singleTest = _pending;
-        }
-        _pending = new ArrayList<>();
-    }
+	private void applyPending(boolean isStatic) {
+		_pending.forEach(ValueChange::apply);
+		if (isStatic) {
+			_allTests = _pending;
+		}
+		else {
+			/*
+			 * There will be no beforeAll() and afterAll() callbacks, so value
+			 * changes must be applied and reverted for every test.
+			 */
+			_singleTest = _pending;
+		}
+		_pending = new ArrayList<>();
+	}
 
-    private void revert(List<ValueChange> valueChanges) {
-        /*
-         * Values reverted in reverse order in case there are multiple
-         * ValueChanges modifying the same value.
-         */
-        Lists.reverse(valueChanges).forEach(ValueChange::revert);
-        valueChanges.clear();
-    }
+	private void revert(List<ValueChange> valueChanges) {
+		/*
+		 * Values reverted in reverse order in case there are multiple
+		 * ValueChanges modifying the same value.
+		 */
+		Lists.reverse(valueChanges).forEach(ValueChange::revert);
+		valueChanges.clear();
+	}
 
-    public void addValueChange(ValueChange valueChange) {
-        if (_isRegistered) {
-            valueChange.apply();
-            if (_isWithinTest) {
-                _singleTest.add(valueChange);
-            }
-            else {
-                _allTests.add(valueChange);
-            }
-        }
-        else {
-            /*
-             * ValueChange.apply() is called later when the first callback is
-             * received, in case the extension has not been registered properly.
-             */
-            _pending.add(valueChange);
-        }
-    }
+	public void addValueChange(ValueChange valueChange) {
+		if (_isRegistered) {
+			valueChange.apply();
+			if (_isWithinTest) {
+				_singleTest.add(valueChange);
+			}
+			else {
+				_allTests.add(valueChange);
+			}
+		}
+		else {
+			/*
+			 * ValueChange.apply() is called later when the first callback is
+			 * received, in case the extension has not been registered properly.
+			 */
+			_pending.add(valueChange);
+		}
+	}
 
-    protected Logger getLogger() {
-        return _logger;
-    }
+	protected Logger getLogger() {
+		return _logger;
+	}
 
 }

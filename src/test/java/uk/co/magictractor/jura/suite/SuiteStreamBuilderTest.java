@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite;
 
 import java.util.List;
@@ -23,23 +24,22 @@ import org.junit.jupiter.api.DynamicNode;
 
 public class SuiteStreamBuilderTest {
 
-    @SuiteTest
-    public void testNoChildPackages() {
-        Assertions.assertThatThrownBy(() -> new SuiteStreamBuilder().selectSuitesInChildPackages())
-                .isExactlyInstanceOf(IllegalStateException.class)
-                .hasMessage("No child packages to select");
-    }
+	@SuiteTest
+	public void testNoChildPackages() {
+		Assertions.assertThatThrownBy(() -> new SuiteStreamBuilder().selectSuitesInChildPackages()).isExactlyInstanceOf(
+			IllegalStateException.class).hasMessage("No child packages to select");
+	}
 
-    private List<DynamicNode> build(SuiteStreamBuilder suiteStreamBuilder) {
-        return suiteStreamBuilder.build().collect(Collectors.toList());
-    }
+	private List<DynamicNode> build(SuiteStreamBuilder suiteStreamBuilder) {
+		return suiteStreamBuilder.build().collect(Collectors.toList());
+	}
 
-    /**
-     * Check dynamic tests are for exactly the classes given. Does not test
-     * dynamic containers.
-     */
-    private void assertTests(List<DynamicNode> nodes, Class... expectedTestClasses) {
-        //        /nodes.stream().filter(Dynamic)
-    }
+	/**
+	 * Check dynamic tests are for exactly the classes given. Does not test
+	 * dynamic containers.
+	 */
+	private void assertTests(List<DynamicNode> nodes, Class... expectedTestClasses) {
+		//        /nodes.stream().filter(Dynamic)
+	}
 
 }

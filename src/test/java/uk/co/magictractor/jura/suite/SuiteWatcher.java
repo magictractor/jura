@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite;
 
 import java.util.Optional;
@@ -22,24 +23,24 @@ import org.junit.jupiter.api.extension.TestWatcher;
 
 public class SuiteWatcher implements TestWatcher {
 
-    @Override
-    public void testDisabled(ExtensionContext context, Optional<String> reason) {
-        System.err.println("testDisabled");
-    }
+	@Override
+	public void testDisabled(ExtensionContext context, Optional<String> reason) {
+		System.err.println("testDisabled");
+	}
 
-    @Override
-    public void testSuccessful(ExtensionContext context) {
-        System.err.println("testSuccessful");
-    }
+	@Override
+	public void testSuccessful(ExtensionContext context) {
+		System.err.println("testSuccessful");
+	}
 
-    @Override
-    public void testAborted(ExtensionContext context, Throwable cause) {
-        System.err.println("testAborted");
-    }
+	@Override
+	public void testAborted(ExtensionContext context, Throwable cause) {
+		System.err.println("testAborted");
+	}
 
-    @Override
-    public void testFailed(ExtensionContext context, Throwable cause) {
-        System.err.println("testFailed");
-    }
+	@Override
+	public void testFailed(ExtensionContext context, Throwable cause) {
+		System.err.println("testFailed");
+	}
 
 }

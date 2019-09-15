@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite.filter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,59 +25,59 @@ import uk.co.magictractor.jura.suite.filter.IsSuiteFilter;
 
 public class IsSuiteFilterTest {
 
-    @Test
-    public void testSuiteWithPrefix() {
-        IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
-        FilterResult filterResult = filter.apply("a.b.c.MySuite");
-        assertIncluded(filterResult);
-    }
+	@Test
+	public void testSuiteWithPrefix() {
+		IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
+		FilterResult filterResult = filter.apply("a.b.c.MySuite");
+		assertIncluded(filterResult);
+	}
 
-    @Test
-    public void testSuiteWithoutPrefix() {
-        IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
-        FilterResult filterResult = filter.apply("a.b.c.Suite");
-        assertIncluded(filterResult);
-    }
+	@Test
+	public void testSuiteWithoutPrefix() {
+		IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
+		FilterResult filterResult = filter.apply("a.b.c.Suite");
+		assertIncluded(filterResult);
+	}
 
-    @Test
-    public void testNotSuite() {
-        IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
-        FilterResult filterResult = filter.apply("a.b.c.SomethingTest");
-        assertExcluded(filterResult);
-    }
+	@Test
+	public void testNotSuite() {
+		IsSuiteFilter filter = new IsSuiteFilter(() -> this::standardIsSuite);
+		FilterResult filterResult = filter.apply("a.b.c.SomethingTest");
+		assertExcluded(filterResult);
+	}
 
-    @Test
-    public void testAlternativePredicateIncluded() {
-        IsSuiteFilter filter = new IsSuiteFilter(() -> this::alternativeIsSuite);
-        FilterResult filterResult = filter.apply("a.b.c.MyBunchOfTests");
-        assertIncluded(filterResult);
-    }
+	@Test
+	public void testAlternativePredicateIncluded() {
+		IsSuiteFilter filter = new IsSuiteFilter(() -> this::alternativeIsSuite);
+		FilterResult filterResult = filter.apply("a.b.c.MyBunchOfTests");
+		assertIncluded(filterResult);
+	}
 
-    @Test
-    public void testAlternativePredicateExcluded() {
-        IsSuiteFilter filter = new IsSuiteFilter(() -> this::alternativeIsSuite);
-        FilterResult filterResult = filter.apply("a.b.c.SomethingSuite");
-        assertExcluded(filterResult);
-    }
+	@Test
+	public void testAlternativePredicateExcluded() {
+		IsSuiteFilter filter = new IsSuiteFilter(() -> this::alternativeIsSuite);
+		FilterResult filterResult = filter.apply("a.b.c.SomethingSuite");
+		assertExcluded(filterResult);
+	}
 
-    private boolean standardIsSuite(String testClassName) {
-        return testClassName.endsWith("Suite");
-    }
+	private boolean standardIsSuite(String testClassName) {
+		return testClassName.endsWith("Suite");
+	}
 
-    private boolean alternativeIsSuite(String testClassName) {
-        return testClassName.endsWith("BunchOfTests");
-    }
+	private boolean alternativeIsSuite(String testClassName) {
+		return testClassName.endsWith("BunchOfTests");
+	}
 
-    private void assertIncluded(FilterResult filterResult) {
-        assertThat(filterResult.included()).isTrue();
-        assertThat(filterResult.getReason().isPresent()).isTrue();
-        assertThat(filterResult.getReason().get()).isEqualTo("is a suite");
-    }
+	private void assertIncluded(FilterResult filterResult) {
+		assertThat(filterResult.included()).isTrue();
+		assertThat(filterResult.getReason().isPresent()).isTrue();
+		assertThat(filterResult.getReason().get()).isEqualTo("is a suite");
+	}
 
-    private void assertExcluded(FilterResult filterResult) {
-        assertThat(filterResult.included()).isFalse();
-        assertThat(filterResult.getReason().isPresent()).isTrue();
-        assertThat(filterResult.getReason().get()).isEqualTo("is not a suite");
-    }
+	private void assertExcluded(FilterResult filterResult) {
+		assertThat(filterResult.included()).isFalse();
+		assertThat(filterResult.getReason().isPresent()).isTrue();
+		assertThat(filterResult.getReason().get()).isEqualTo("is not a suite");
+	}
 
 }

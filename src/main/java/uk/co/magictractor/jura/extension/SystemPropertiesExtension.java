@@ -13,21 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.extension;
 
 public class SystemPropertiesExtension extends AbstractValueChangeExtension {
 
-    public SystemPropertiesExtension withoutProperty(String key) {
-        return withProperty(key, null);
-    }
+	public SystemPropertiesExtension withoutProperty(String key) {
+		return withProperty(key, null);
+	}
 
-    public SystemPropertiesExtension withProperty(Class<?> apiClass, String apiClassPropertyName, String value) {
-        return withProperty(apiClass.getName() + "." + apiClassPropertyName, value);
-    }
+	public SystemPropertiesExtension withProperty(Class<?> apiClass, String apiClassPropertyName, String value) {
+		return withProperty(apiClass.getName() + "." + apiClassPropertyName, value);
+	}
 
-    public SystemPropertiesExtension withProperty(String propertyName, String value) {
-        addValueChange(new SystemPropertyValueChange(propertyName, value));
-        return this;
-    }
+	public SystemPropertiesExtension withProperty(String propertyName, String value) {
+		addValueChange(new SystemPropertyValueChange(propertyName, value));
+		return this;
+	}
 
 }

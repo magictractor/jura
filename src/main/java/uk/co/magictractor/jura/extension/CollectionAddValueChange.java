@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.extension;
 
 import java.util.Collection;
@@ -22,32 +23,32 @@ import org.slf4j.LoggerFactory;
 
 public class CollectionAddValueChange<T> implements ValueChange {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CollectionAddValueChange.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(CollectionAddValueChange.class);
 
-    private final Collection<T> _collection;
-    private final T _addValue;
-    private boolean _alreadyContained;
+	private final Collection<T> _collection;
+	private final T _addValue;
+	private boolean _alreadyContained;
 
-    public CollectionAddValueChange(Collection<T> collection, T addValue) {
-        _collection = collection;
-        _addValue = addValue;
-    }
+	public CollectionAddValueChange(Collection<T> collection, T addValue) {
+		_collection = collection;
+		_addValue = addValue;
+	}
 
-    @Override
-    public void apply() {
-        _alreadyContained = _collection.contains(_addValue);
-        if (_alreadyContained) {
-            _collection.add(_addValue);
-            LOGGER.debug("added value to collection: {}", _addValue);
-        }
-    }
+	@Override
+	public void apply() {
+		_alreadyContained = _collection.contains(_addValue);
+		if (_alreadyContained) {
+			_collection.add(_addValue);
+			LOGGER.debug("added value to collection: {}", _addValue);
+		}
+	}
 
-    @Override
-    public void revert() {
-        if (!_alreadyContained) {
-            _collection.remove(_addValue);
-            LOGGER.debug("removed value from collection: {}", _addValue);
-        }
-    }
+	@Override
+	public void revert() {
+		if (!_alreadyContained) {
+			_collection.remove(_addValue);
+			LOGGER.debug("removed value from collection: {}", _addValue);
+		}
+	}
 
 }

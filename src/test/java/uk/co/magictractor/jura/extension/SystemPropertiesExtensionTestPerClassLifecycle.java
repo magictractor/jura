@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.extension;
 
 import org.junit.jupiter.api.BeforeAll;
@@ -37,19 +38,19 @@ import uk.co.magictractor.jura.extension.SystemPropertiesExtension;
 @TestInstance(Lifecycle.PER_CLASS)
 public class SystemPropertiesExtensionTestPerClassLifecycle extends AbstractSystemPropertiesExtensionTest {
 
-    @RegisterExtension
-    public static SystemPropertiesExtension STATIC_EXTENSION = new SystemPropertiesExtension()
-            .withProperty(STATIC_KEY_FIELD, INITIAL_VALUE);
+	@RegisterExtension
+	public static SystemPropertiesExtension STATIC_EXTENSION = new SystemPropertiesExtension().withProperty(
+		STATIC_KEY_FIELD, INITIAL_VALUE);
 
-    @BeforeAll
-    public static void beforeAll() {
-        // Note that extension beforeAll() has already been called at this point.
-        STATIC_EXTENSION.withProperty(STATIC_KEY_BEFORE_ALL, INITIAL_VALUE);
-    }
+	@BeforeAll
+	public static void beforeAll() {
+		// Note that extension beforeAll() has already been called at this point.
+		STATIC_EXTENSION.withProperty(STATIC_KEY_BEFORE_ALL, INITIAL_VALUE);
+	}
 
-    @Override
-    protected SystemPropertiesExtension getStaticExtension() {
-        return STATIC_EXTENSION;
-    }
+	@Override
+	protected SystemPropertiesExtension getStaticExtension() {
+		return STATIC_EXTENSION;
+	}
 
 }

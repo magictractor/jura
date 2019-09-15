@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package uk.co.magictractor.jura.suite.filter;
 
 import org.junit.platform.engine.Filter;
@@ -24,62 +25,62 @@ import org.junit.platform.launcher.PostDiscoveryFilter;
 
 public final class PreserveInterfaceFilter {
 
-    private PreserveInterfaceFilter() {
-    }
+	private PreserveInterfaceFilter() {
+	}
 
-    @SuppressWarnings("unchecked")
-    public static <T> Filter<T> preserveInterface(Filter<T> baseFilter, Filter<T> wrappedFilter) {
-        if (baseFilter instanceof ClassNameFilter) {
-            return (Filter<T>) new PreserveClassNameFilter((Filter<String>) wrappedFilter);
-        }
-        else if (baseFilter instanceof PackageNameFilter) {
-            return (Filter<T>) new PreservePackageNameFilter((Filter<String>) wrappedFilter);
-        }
-        else if (baseFilter instanceof PostDiscoveryFilter) {
-            return (Filter<T>) new PreservePostDiscoveryFilter((Filter<TestDescriptor>) wrappedFilter);
-        }
-        else {
-            throw new IllegalArgumentException(
-                "Filter interface not found on " + baseFilter.getClass().getSimpleName());
-        }
-    }
+	@SuppressWarnings("unchecked")
+	public static <T> Filter<T> preserveInterface(Filter<T> baseFilter, Filter<T> wrappedFilter) {
+		if (baseFilter instanceof ClassNameFilter) {
+			return (Filter<T>) new PreserveClassNameFilter((Filter<String>) wrappedFilter);
+		}
+		else if (baseFilter instanceof PackageNameFilter) {
+			return (Filter<T>) new PreservePackageNameFilter((Filter<String>) wrappedFilter);
+		}
+		else if (baseFilter instanceof PostDiscoveryFilter) {
+			return (Filter<T>) new PreservePostDiscoveryFilter((Filter<TestDescriptor>) wrappedFilter);
+		}
+		else {
+			throw new IllegalArgumentException(
+				"Filter interface not found on " + baseFilter.getClass().getSimpleName());
+		}
+	}
 
-    public abstract static class AbstractPreserveInterfaceFilter<T> implements Filter<T> {
+	public abstract static class AbstractPreserveInterfaceFilter<T> implements Filter<T> {
 
-        private Filter<T> _wrappedFilter;
+		private Filter<T> _wrappedFilter;
 
-        public AbstractPreserveInterfaceFilter(Filter<T> wrappedFilter) {
-            _wrappedFilter = wrappedFilter;
-        }
+		public AbstractPreserveInterfaceFilter(Filter<T> wrappedFilter) {
+			_wrappedFilter = wrappedFilter;
+		}
 
-        @Override
-        public FilterResult apply(T object) {
-            return _wrappedFilter.apply(object);
-        }
-    }
+		@Override
+		public FilterResult apply(T object) {
+			return _wrappedFilter.apply(object);
+		}
+	}
 
-    public static final class PreserveClassNameFilter extends AbstractPreserveInterfaceFilter<String>
-            implements ClassNameFilter {
+	public static final class PreserveClassNameFilter extends AbstractPreserveInterfaceFilter<String>
+			implements ClassNameFilter {
 
-        public PreserveClassNameFilter(Filter<String> wrappedFilter) {
-            super(wrappedFilter);
-        }
-    }
+		public PreserveClassNameFilter(Filter<String> wrappedFilter) {
+			super(wrappedFilter);
+		}
+	}
 
-    public static final class PreservePackageNameFilter extends AbstractPreserveInterfaceFilter<String>
-            implements PackageNameFilter {
+	public static final class PreservePackageNameFilter extends AbstractPreserveInterfaceFilter<String>
+			implements PackageNameFilter {
 
-        public PreservePackageNameFilter(Filter<String> wrappedFilter) {
-            super(wrappedFilter);
-        }
-    }
+		public PreservePackageNameFilter(Filter<String> wrappedFilter) {
+			super(wrappedFilter);
+		}
+	}
 
-    public static final class PreservePostDiscoveryFilter extends AbstractPreserveInterfaceFilter<TestDescriptor>
-            implements PostDiscoveryFilter {
+	public static final class PreservePostDiscoveryFilter extends AbstractPreserveInterfaceFilter<TestDescriptor>
+			implements PostDiscoveryFilter {
 
-        public PreservePostDiscoveryFilter(Filter<TestDescriptor> wrappedFilter) {
-            super(wrappedFilter);
-        }
-    }
+		public PreservePostDiscoveryFilter(Filter<TestDescriptor> wrappedFilter) {
+			super(wrappedFilter);
+		}
+	}
 
 }
