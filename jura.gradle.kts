@@ -22,6 +22,7 @@ dependencies {
     implementation("org.junit.jupiter:junit-jupiter-engine:5.4.2")
     implementation("org.junit.platform:junit-platform-launcher:1.4.2")
     implementation("org.assertj:assertj-core:3.11.1")
+    implementation("net.bytebuddy:byte-buddy:1.10.2")
 
     // Use of JUnit4's @SelectClasses, @ExcludeTags etc is optional, so use compileOnly.
     // JUnitSuiteSuiteAnnotationReader should not be used if this project is not present.    
